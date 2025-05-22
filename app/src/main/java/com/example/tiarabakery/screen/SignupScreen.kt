@@ -32,12 +32,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.tiarabakery.AppUtil
 import com.example.tiarabakery.R
 import com.example.tiarabakery.viewmodel.AuthViewModel
 
 @Composable
-fun SignupScreen(modifier: Modifier = Modifier, authViewModel: AuthViewModel = viewModel()) {
+fun SignupScreen(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel = viewModel()) {
 
     var email by remember {
         mutableStateOf("")
@@ -47,6 +48,9 @@ fun SignupScreen(modifier: Modifier = Modifier, authViewModel: AuthViewModel = v
     }
     var password by remember {
         mutableStateOf("")
+    }
+    var isLoading by remember {
+        mutableStateOf(false)
     }
 
     var context = LocalContext.current
@@ -104,21 +108,27 @@ fun SignupScreen(modifier: Modifier = Modifier, authViewModel: AuthViewModel = v
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
+                isLoading = true
                 authViewModel.signup(name, email, password){success, errorMessage->
                     if(success){
-
+                        isLoading = false
+                        navController.navigate("home"){
+                            popUpTo("auth"){inclusive = true}
+                        }
                     } else {
+                        isLoading = false
                         AppUtil.showToast(context, errorMessage?:"Something went wrong")
                     }
 
                 }
             },
+            enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
         ) {
             Text(
-                text = "Signup",
+                text = if(isLoading)"Create an account" else "Signup",
                 fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.catamaran_medium))
             )
@@ -126,7 +136,7 @@ fun SignupScreen(modifier: Modifier = Modifier, authViewModel: AuthViewModel = v
         Spacer(modifier = Modifier.height(12.dp))
 
         TextButton(onClick = {
-
+            navController.navigate("login")
         }) {
             Text(text = "Already have an account? Login")
         }

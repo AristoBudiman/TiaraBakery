@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -30,16 +31,25 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.tiarabakery.AppUtil
 import com.example.tiarabakery.R
+import com.example.tiarabakery.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel= viewModel()) {
     var email by remember {
         mutableStateOf("")
     }
     var password by remember {
         mutableStateOf("")
     }
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+
+    var context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -96,14 +106,27 @@ fun LoginScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
+                isLoading = true
+                authViewModel.login(email, password){success, errorMessage->
+                    if(success){
+                        isLoading = false
+                        navController.navigate("home"){
+                            popUpTo("auth"){inclusive = true}
+                        }
+                    } else {
+                        isLoading = false
+                        AppUtil.showToast(context, errorMessage?:"Something went wrong")
+                    }
 
+                }
             },
+            enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
         ) {
             Text(
-                text = "Login",
+                text = if(isLoading)"Logging in" else "Login",
                 fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.catamaran_medium))
             )
@@ -111,7 +134,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(12.dp))
 
         TextButton(onClick = {
-
+            navController.navigate("signup")
         }) {
             Text(text = "Don't have an account, Signup")
         }
