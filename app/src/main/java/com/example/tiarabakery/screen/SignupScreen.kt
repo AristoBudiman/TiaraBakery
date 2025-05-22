@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -30,10 +31,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tiarabakery.AppUtil
 import com.example.tiarabakery.R
+import com.example.tiarabakery.viewmodel.AuthViewModel
 
 @Composable
-fun SignupScreen(modifier: Modifier = Modifier) {
+fun SignupScreen(modifier: Modifier = Modifier, authViewModel: AuthViewModel = viewModel()) {
 
     var email by remember {
         mutableStateOf("")
@@ -44,6 +48,8 @@ fun SignupScreen(modifier: Modifier = Modifier) {
     var password by remember {
         mutableStateOf("")
     }
+
+    var context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -98,7 +104,14 @@ fun SignupScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
+                authViewModel.signup(name, email, password){success, errorMessage->
+                    if(success){
 
+                    } else {
+                        AppUtil.showToast(context, errorMessage?:"Something went wrong")
+                    }
+
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

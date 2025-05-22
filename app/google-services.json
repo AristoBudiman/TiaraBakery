@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "977557940932",
+    "project_id": "tiarabakeryapp",
+    "storage_bucket": "tiarabakeryapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977557940932:android:64df65cf4d736b010e7791",
+        "android_client_info": {
+          "package_name": "com.example.tiarabakery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXezFiwuIpcqkfKGBBidAyXlQFfkyOV2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
