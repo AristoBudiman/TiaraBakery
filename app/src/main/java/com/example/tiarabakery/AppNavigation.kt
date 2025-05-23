@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tiarabakery.pages.ProfilePage
 import com.example.tiarabakery.screen.AuthScreen
 import com.example.tiarabakery.screen.HomeScreen
 import com.example.tiarabakery.screen.LoginScreen
@@ -30,6 +31,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable("home"){
             HomeScreen(modifier, navController)
+        }
+        //tambahan
+        composable("profilpage"){
+            ProfilePage(modifier, navController)
         }
     }
 }
