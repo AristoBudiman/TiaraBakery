@@ -54,7 +54,7 @@ fun BannerView(modifier: Modifier = Modifier) {
             pageSpacing = 24.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(400.dp)
         ) {
             AsyncImage(
                 model = bannerList.get(it),

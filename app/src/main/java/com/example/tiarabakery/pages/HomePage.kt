@@ -24,7 +24,7 @@ fun HomePage(modifier: Modifier = Modifier) {
     ){
         HeaderView(modifier)
         Spacer(modifier = Modifier.height(12.dp))
-        BannerView(modifier = Modifier.height(200.dp))
+        BannerView(modifier = Modifier.height(450.dp))
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = "Categories",
