@@ -2,9 +2,11 @@ package com.example.tiarabakery
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tiarabakery.pages.CategoryProductPage
 import com.example.tiarabakery.pages.ProfilePage
 import com.example.tiarabakery.screen.AuthScreen
 import com.example.tiarabakery.screen.HomeScreen
@@ -16,6 +18,7 @@ import com.google.firebase.auth.auth
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
+    GlobalNavigation.navController = navController
     val isLoggedIn = Firebase.auth.currentUser!=null
     val firstPage = if(isLoggedIn) "home" else "auth"
 
@@ -32,9 +35,17 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("home"){
             HomeScreen(modifier, navController)
         }
+        composable("category-product/{categoryId}"){
+            var categoryId = it.arguments?.getString("categoryId")
+            CategoryProductPage(modifier,categoryId?:"")
+        }
         //tambahan
         composable("profilpage"){
             ProfilePage(modifier, navController)
         }
     }
+}
+
+object GlobalNavigation{
+    lateinit var navController: NavController
 }
