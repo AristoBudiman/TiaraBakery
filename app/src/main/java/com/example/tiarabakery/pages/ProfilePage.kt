@@ -14,6 +14,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -29,7 +31,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFF1DE))
+            .background(colorResource(id = R.color.cream))
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -39,7 +41,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             style = TextStyle(
                 fontSize = 25.sp,
                 fontFamily = FontFamily(Font(R.font.catamaran_medium)),
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
         )
@@ -49,7 +51,11 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             navController.navigate("auth"){
                 popUpTo("home"){inclusive = true}
             }
-        }) {
+        },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.brown)
+            )
+        ) {
             Text(text = "Log Out")
         }
     }

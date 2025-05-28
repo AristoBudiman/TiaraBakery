@@ -1,5 +1,7 @@
 package com.example.tiarabakery.pages
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +14,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import com.example.tiarabakery.R
 import com.example.tiarabakery.components.ProductItemView
 import com.example.tiarabakery.model.CategoryModel
 import com.example.tiarabakery.model.ProductModel
@@ -40,17 +44,22 @@ fun CategoryProductPage(modifier: Modifier = Modifier, categoryId:String) {
             }
     }
 
-    LazyColumn (
+    Box (
         modifier = Modifier.fillMaxSize()
-            .padding(16.dp)
+            .background(colorResource(id = R.color.cream))
     ){
-        items(productsList.value.chunked(2)){rowItem->
-            Row {
-                rowItem.forEach{
-                    ProductItemView(product = it, modifier = Modifier.weight(1f))
-                }
-                if(rowItem.size==1){
-                    Spacer(modifier =Modifier.weight(1f))
+        LazyColumn (
+            modifier = Modifier.fillMaxSize()
+                .padding(16.dp)
+        ){
+            items(productsList.value.chunked(2)){rowItem->
+                Row {
+                    rowItem.forEach{
+                        ProductItemView(product = it, modifier = Modifier.weight(1f))
+                    }
+                    if(rowItem.size==1){
+                        Spacer(modifier =Modifier.weight(1f))
+                    }
                 }
             }
         }

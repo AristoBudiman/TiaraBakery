@@ -1,5 +1,6 @@
 package com.example.tiarabakery.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,11 +16,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.tiarabakery.R
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
@@ -56,12 +60,18 @@ fun BannerView(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .height(400.dp)
         ) {
-            AsyncImage(
-                model = bannerList.get(it),
-                contentDescription = "banner",
-                modifier = Modifier.fillMaxWidth( )
-                    .clip(RoundedCornerShape(16.dp))
-            )
+            Box (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ){
+                AsyncImage(
+                    model = bannerList.get(it),
+                    contentDescription = "banner",
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -70,7 +80,7 @@ fun BannerView(modifier: Modifier = Modifier) {
             dotCount = bannerList.size,
             type = ShiftIndicatorType(
                 DotGraphic(
-                    color = Color.Black,
+                    color = colorResource(id = R.color.brown),
                     size = 8.dp
                 )
             ),

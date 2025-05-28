@@ -18,8 +18,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.tiarabakery.R
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
@@ -48,8 +51,22 @@ fun HeaderView(modifier: Modifier = Modifier) {
         Column (
 
         ){
-            Text(text = "Welcome Back")
-            Text(text = name, style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold))
+            Text(
+                text = "Welcome Back",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = FontFamily(Font(R.font.catamaran_medium))
+                )
+            )
+            Text(
+                text = name,
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.catamaran_medium))
+                )
+            )
         }
 
         IconButton(onClick = {}) {

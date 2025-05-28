@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -58,7 +60,9 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     Scaffold (
         bottomBar = {
-            NavigationBar {
+            NavigationBar (
+                containerColor = colorResource(id = R.color.white)
+            ){
                 navItemList.forEachIndexed { index, navItem ->
                     NavigationBarItem(
                         selected = index==selectedIndex,
@@ -66,9 +70,20 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
                             selectedIndex = index
                         },
                         icon = {
-                            Icon(imageVector = navItem.icon, contentDescription = navItem.label)
+                            Icon(
+                                imageVector = navItem.icon,
+                                contentDescription = navItem.label,
+                                tint = if (index==selectedIndex) colorResource(id = R.color.light_brown) else colorResource(id = R.color.brown)
+                            )
+
                         },
-                        label = {Text(text = navItem.label)}
+
+                        label = {Text(
+                            text = navItem.label,
+                            color = if (index == selectedIndex) colorResource(id = R.color.light_brown) else colorResource(id = R.color.brown),
+                            fontFamily = FontFamily(Font(R.font.catamaran_medium)),
+                        )},
+                        colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent)
                     )
                 }
             }
@@ -77,6 +92,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         ContentScreen(modifier = modifier.padding(it), selectedIndex, navController)
     }
 }
+
 //ContentScreen tambah navController
 @Composable
 fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int, navController: NavController) {
