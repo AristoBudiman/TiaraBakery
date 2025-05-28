@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -58,7 +60,7 @@ fun SignupScreen(modifier: Modifier = Modifier, navController: NavController, au
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFF1DE))
+            .background(colorResource(id = R.color.cream))
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -75,7 +77,7 @@ fun SignupScreen(modifier: Modifier = Modifier, navController: NavController, au
             style = TextStyle(
                 fontSize = 25.sp,
                 fontFamily = FontFamily(Font(R.font.catamaran_medium)),
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
         )
@@ -125,7 +127,10 @@ fun SignupScreen(modifier: Modifier = Modifier, navController: NavController, au
             enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
+                .height(60.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.brown)
+            )
         ) {
             Text(
                 text = if(isLoading)"Create an account" else "Signup",
@@ -138,7 +143,12 @@ fun SignupScreen(modifier: Modifier = Modifier, navController: NavController, au
         TextButton(onClick = {
             navController.navigate("login")
         }) {
-            Text(text = "Already have an account? Login")
+            Text(
+                text = "Already have an account? Login",
+                fontFamily = FontFamily(Font(R.font.catamaran_medium)),
+                fontSize = 16.sp,
+                color = colorResource(id = R.color.brown)
+            )
         }
 
 
