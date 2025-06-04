@@ -1,5 +1,6 @@
 package com.example.tiarabakery.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,13 +30,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.tiarabakery.GlobalNavigation
 import com.example.tiarabakery.R
 import com.example.tiarabakery.model.ProductModel
 
 @Composable
 fun ProductItemView(modifier: Modifier = Modifier, product:ProductModel) {
     Card (
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp)
+            .clickable {
+                GlobalNavigation.navController.navigate("product-details/"+product.id)
+            },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.light_brown))
