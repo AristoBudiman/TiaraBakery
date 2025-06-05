@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.tiarabakery.AppUtil
 import com.example.tiarabakery.R
 import com.example.tiarabakery.model.ProductModel
 import com.google.firebase.Firebase
@@ -53,6 +55,9 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
     var product by remember {
         mutableStateOf(ProductModel())
     }
+
+    var context = LocalContext.current
+
     LaunchedEffect (key1 = Unit){
         Firebase.firestore.collection("data").document("stock")
             .collection("products")
@@ -152,13 +157,15 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = {},
+            onClick = {
+                AppUtil.addToCart(context, productId)
+            },
             modifier = Modifier.fillMaxSize().height(50.dp)
         ) {
             Text(text = "Add to Cart", fontSize = 16.sp)
         }
         Spacer(modifier = Modifier.height(16.dp))
-        if (product.description.isNotEmpty())
+        if (product.description.isNotEmpty()) {
             Text(
                 text = "Product Description : ",
                 fontWeight = FontWeight.Bold,
@@ -169,5 +176,6 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
                 text = product.description,
                 fontSize = 16.sp
             )
+        }
     }
 }
