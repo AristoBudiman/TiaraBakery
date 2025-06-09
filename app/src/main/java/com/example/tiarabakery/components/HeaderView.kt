@@ -48,9 +48,7 @@ fun HeaderView(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ){
-        Column (
-
-        ){
+        Column (){
             Text(
                 text = "Welcome Back",
                 style = TextStyle(
