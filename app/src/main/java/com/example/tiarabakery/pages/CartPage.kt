@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tiarabakery.AppUtil
+import com.example.tiarabakery.GlobalNavigation
 import com.example.tiarabakery.R
 import com.example.tiarabakery.components.CartItemView
 import com.example.tiarabakery.model.UserModel
@@ -82,7 +83,7 @@ fun CartPage(modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-
+                GlobalNavigation.navController.navigate("checkout")
             },
             modifier = Modifier
                 .fillMaxWidth()

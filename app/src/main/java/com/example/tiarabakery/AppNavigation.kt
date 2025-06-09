@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tiarabakery.pages.CategoryProductPage
+import com.example.tiarabakery.pages.Checkoutpage
 import com.example.tiarabakery.pages.ProductDetailsPage
 import com.example.tiarabakery.pages.ProfilePage
 import com.example.tiarabakery.screen.AuthScreen
@@ -47,6 +48,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         //tambahan
         composable("profilpage"){
             ProfilePage(modifier, navController)
+        }
+        composable("checkout"){
+            Checkoutpage(modifier)
         }
     }
 }
