@@ -56,17 +56,24 @@ fun Checkoutpage(modifier: Modifier = Modifier){
         mutableStateOf(0f)
     }
 
-    fun calculateAndAssign(){
-        productList.forEach {
-            if (it.actualPrice.isNotEmpty()) {
-                val qty = userModel.value.cartItems[it.id] ?: 0
-                subTotal.value += it.actualPrice.toFloat() * qty
+    fun calculateAndAssign() {
+        subTotal.value = 0f // Reset before calculation
+
+        productList.forEach { product ->
+            if (product.actualPrice.isNotEmpty()) {
+                val normalizedPrice = product.actualPrice
+                    .replace(",", ".")
+                    .replace("[^\\d.]".toRegex(), "")
+
+                val price = normalizedPrice.toFloatOrNull() ?: 0f
+                val qty = userModel.value.cartItems[product.id] ?: 0
+                subTotal.value += price * qty
             }
         }
 
-        discount.value = subTotal.value * (AppUtil.getDiscountPercentage())/100;
-        tax.value = subTotal.value * (AppUtil.getTaxPercentage())/100
-        total.value = "%.2f".format(subTotal.value - discount.value + tax.value).toFloat()
+        discount.value = subTotal.value * (AppUtil.getDiscountPercentage() / 100)
+        tax.value = subTotal.value * (AppUtil.getTaxPercentage() / 100)
+        total.value = subTotal.value - discount.value + tax.value
     }
 
     LaunchedEffect(key1 = Unit) {
