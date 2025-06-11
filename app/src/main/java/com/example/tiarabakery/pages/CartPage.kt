@@ -73,23 +73,34 @@ fun CartPage(modifier: Modifier = Modifier) {
             )
         )
 
-        LazyColumn (
+        if (userModel.value.cartItems.isNotEmpty()){
+            LazyColumn (
 //            modifier = Modifier.weight(1f)
-        ){
-            items(userModel.value.cartItems.toList(), key = {it.first}){(productId,qty)->
-                CartItemView(productId = productId, qty = qty)
+            ){
+                items(userModel.value.cartItems.toList(), key = {it.first}){(productId,qty)->
+                    CartItemView(productId = productId, qty = qty)
+                }
             }
-        }
 
-        Button(
-            onClick = {
-                GlobalNavigation.navController.navigate("checkout")
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-        ) {
-            Text(text = "Checkout")
+            Button(
+                onClick = {
+                    GlobalNavigation.navController.navigate("checkout")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+            ) {
+                Text(text = "Checkout")
+            }
+        } else{
+            Column (
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "No items here", fontSize = 32.sp)
+            }
+
         }
     }
 }

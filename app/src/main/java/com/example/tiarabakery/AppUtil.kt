@@ -1,11 +1,15 @@
 package com.example.tiarabakery
 
+import android.app.Activity
 import android.content.Context
 import android.widget.Toast
+import com.example.tiarabakery.model.OrderModel
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
+import java.util.UUID
 
 object AppUtil {
 
@@ -68,7 +72,62 @@ object AppUtil {
     }
 
     fun getTaxPercentage() : Float{
-        return 0f
+        return 11.0f
     }
 
-}
+//  Non-fungsional
+//    fun razorpaiApiKey() : String{
+//        return "mockdata"
+//    }
+
+//    fun startPayment(amount : Float){
+//        val checkout = Checkout()
+//        checkout.setKeyID(razorpaiApiKey())
+//
+//        val options = JSONObject()
+//        options.put("name", "Tiara Bakery")
+//        options.put("description","")
+//        options.put("amount",amount*100)
+//        options.put("currency", "USD")
+//
+//        checkout.open(GlobalNavigation.navController.context as Activity,options)
+//    }
+
+    fun clearCartAndAddToOrders(total: Long){
+        val userDoc = Firebase.firestore.collection("users")
+            .document(FirebaseAuth.getInstance().currentUser?.uid!!)
+
+        userDoc.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val userData = task.result
+
+                val currentCart = userData.get("cartItems") as? Map<String, Long> ?: emptyMap()
+                val address = userData.getString("address") ?: ""
+                val phone = userData.getString("phone") ?: ""
+                val userEmail = userData.getString("email") ?: ""
+
+                    val order = OrderModel(
+                        id = "ORD_" + UUID.randomUUID().toString().replace("-", "").take(10).uppercase(),
+                        userId = FirebaseAuth.getInstance().currentUser?.uid!!,
+                        userEmail = userEmail,
+                        phone = phone,
+                        createdAt = Timestamp.now(),
+                        updatedAt = Timestamp.now(),
+                        items = currentCart,
+                        status = "sedang diproses",
+                        address = address,
+                        total = total
+                    )
+
+                    Firebase.firestore.collection("orders")
+                        .document(order.id).set(order)
+                        .addOnCompleteListener { orderTask ->
+                            if (orderTask.isSuccessful) {
+                                userDoc.update("cartItems", FieldValue.delete())
+                            }
+                        }
+                }
+            }
+        }
+
+    }

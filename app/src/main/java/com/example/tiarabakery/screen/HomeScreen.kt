@@ -50,8 +50,9 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home),
-        NavItem("Favorite", Icons.Default.Favorite),
         NavItem("Cart", Icons.Default.ShoppingCart),
+        NavItem("Favorite", Icons.Default.Favorite),
+
         NavItem("Profile", Icons.Default.Person),
     )
 
@@ -100,8 +101,8 @@ fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int, navControl
 
     when (selectedIndex){
         0 -> HomePage(modifier)
-        1 -> FavoritePage(modifier)
-        2 -> CartPage(modifier)
+        1 -> CartPage(modifier)
+        2 -> FavoritePage(modifier)
         3 -> ProfilePage(modifier, navController)
 
     }

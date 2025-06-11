@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tiarabakery.AppUtil
+import com.example.tiarabakery.AppUtil.clearCartAndAddToOrders
+import com.example.tiarabakery.GlobalNavigation
 import com.example.tiarabakery.model.ProductModel
 import com.example.tiarabakery.model.UserModel
 import com.google.firebase.Firebase
@@ -132,6 +135,20 @@ fun Checkoutpage(modifier: Modifier = Modifier){
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                clearCartAndAddToOrders(total.value.toLong())
+                GlobalNavigation.navController.navigate("home")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        ) {
+            Text(text = "Pay Now")
+        }
     }
 
 }
