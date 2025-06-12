@@ -39,7 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.tiarabakery.R
 import com.example.tiarabakery.pages.CartPage
-import com.example.tiarabakery.pages.FavoritePage
+import com.example.tiarabakery.pages.OrderPage
 import com.example.tiarabakery.pages.HomePage
 import com.example.tiarabakery.pages.ProfilePage
 import com.google.firebase.Firebase
@@ -102,7 +102,7 @@ fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int, navControl
     when (selectedIndex){
         0 -> HomePage(modifier)
         1 -> CartPage(modifier)
-        2 -> FavoritePage(modifier)
+        2 -> OrderPage(modifier)
         3 -> ProfilePage(modifier, navController)
 
     }
