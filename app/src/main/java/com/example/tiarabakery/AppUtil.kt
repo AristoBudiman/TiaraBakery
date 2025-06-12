@@ -2,8 +2,6 @@ package com.example.tiarabakery
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import com.example.tiarabakery.model.OrderModel
 import com.google.firebase.Firebase
@@ -11,16 +9,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
-import com.midtrans.sdk.corekit.core.MidtransSDK
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import org.json.JSONObject
-import java.io.IOException
 import java.util.UUID
 
 object AppUtil {
@@ -89,7 +77,7 @@ object AppUtil {
 
 //  Non-fungsional
 //    fun razorpaiApiKey() : String{
-//        return ""
+//        return "mockdata"
 //    }
 
 //    fun startPayment(amount : Float){
@@ -105,53 +93,6 @@ object AppUtil {
 //        checkout.open(GlobalNavigation.navController.context as Activity,options)
 //    }
 
-    fun startPayment(amount: Float, email: String, activity: Activity) {
-        val client = OkHttpClient()
-
-        val jsonObject = JSONObject().apply {
-            put("total", amount.toInt())
-            put("email", email)
-        }
-
-        val requestBody = jsonObject.toString()
-            .toRequestBody("application/json; charset=utf-8".toMediaType())
-
-        val request = Request.Builder()
-            .url("http://10.0.2.2:3001/create-transaction") // URL backend kamu
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                activity.runOnUiThread {
-                    Toast.makeText(activity, "Gagal membuat transaksi: ${e.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string()
-                val snapUrl = try {
-                    JSONObject(responseBody ?: "").getString("redirect_url")
-                } catch (e: Exception) {
-                    null
-                }
-
-                if (snapUrl != null) {
-                    activity.runOnUiThread {
-                        val intent = Intent(activity, MidtransWebViewActivity::class.java)
-                        intent.putExtra("snap_url", snapUrl)
-                        activity.startActivity(intent)
-                    }
-                } else {
-                    activity.runOnUiThread {
-                        Toast.makeText(activity, "Gagal mendapatkan Snap URL", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        })
-    }
-
-
     fun clearCartAndAddToOrders(total: Long){
         val userDoc = Firebase.firestore.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)
@@ -165,27 +106,28 @@ object AppUtil {
                 val phone = userData.getString("phone") ?: ""
                 val userEmail = userData.getString("email") ?: ""
 
-                    val order = OrderModel(
-                        id = "ORD_" + UUID.randomUUID().toString().replace("-", "").take(10).uppercase(),
-                        userId = FirebaseAuth.getInstance().currentUser?.uid!!,
-                        userEmail = userEmail,
-                        phone = phone,
-                        createdAt = Timestamp.now(),
-                        updatedAt = Timestamp.now(),
-                        items = currentCart,
-                        status = "sedang diproses",
-                        address = address,
-                        total = total
-                    )
+                val order = OrderModel(
+                    id = "ORD_" + UUID.randomUUID().toString().replace("-", "").take(10).uppercase(),
+                    userId = FirebaseAuth.getInstance().currentUser?.uid!!,
+                    userEmail = userEmail,
+                    phone = phone,
+                    createdAt = Timestamp.now(),
+                    updatedAt = Timestamp.now(),
+                    items = currentCart,
+                    status = "sedang diproses",
+                    address = address,
+                    total = total
+                )
 
-                    Firebase.firestore.collection("orders")
-                        .document(order.id).set(order)
-                        .addOnCompleteListener { orderTask ->
-                            if (orderTask.isSuccessful) {
-                                userDoc.update("cartItems", FieldValue.delete())
-                            }
+                Firebase.firestore.collection("orders")
+                    .document(order.id).set(order)
+                    .addOnCompleteListener { orderTask ->
+                        if (orderTask.isSuccessful) {
+                            userDoc.update("cartItems", FieldValue.delete())
                         }
+                    }
             }
         }
     }
+
 }
