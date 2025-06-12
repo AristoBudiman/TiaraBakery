@@ -1,5 +1,6 @@
 package com.example.tiarabakery.pages
 
+import android.app.Activity
 import android.icu.text.CaseMap.Title
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,12 +19,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tiarabakery.AppUtil
 import com.example.tiarabakery.AppUtil.clearCartAndAddToOrders
+import com.example.tiarabakery.AppUtil.startPayment
 import com.example.tiarabakery.GlobalNavigation
 import com.example.tiarabakery.model.ProductModel
 import com.example.tiarabakery.model.UserModel
@@ -58,6 +61,9 @@ fun Checkoutpage(modifier: Modifier = Modifier){
     val total = remember {
         mutableStateOf(0f)
     }
+
+    val context = LocalContext.current
+    val activity = context as Activity
 
     fun calculateAndAssign() {
         subTotal.value = 0f // Reset before calculation
@@ -140,8 +146,11 @@ fun Checkoutpage(modifier: Modifier = Modifier){
 
         Button(
             onClick = {
-                clearCartAndAddToOrders(total.value.toLong())
-                GlobalNavigation.navController.navigate("home")
+                AppUtil.startPayment(
+                    amount = total.value,
+                    email = userModel.value.email,
+                    activity = activity
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()

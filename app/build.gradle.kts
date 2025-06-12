@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -65,4 +66,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.8")
     implementation ("io.coil-kt:coil-compose:2.2.0")
     implementation("com.tbuonomo:dotsindicator:5.1.0")
+    implementation ("com.midtrans:uikit:2.0.0")
+    implementation ("androidx.browser:browser:1.5.0")
+
+
 }

@@ -16,6 +16,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven ( url = "https://jcenter.bintray.com" ) // untuk mendukung dependensi Midtrans
     }
 }
 
