@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.widget.Toast
 import com.example.tiarabakery.model.OrderModel
+import com.example.tiarabakery.model.UserModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -37,6 +38,21 @@ object AppUtil {
                     }
             }
         }
+    }
+    fun getUserData(userId: String, onSuccess: (UserModel) -> Unit, onFailure: (Exception) -> Unit) {
+        Firebase.firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = document.toObject(UserModel::class.java)
+                    user?.let { onSuccess(it) }
+                } else {
+                    onFailure(Exception("User not found"))
+                }
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
     }
     fun removeFromCart(context: Context, productId: String, removeAll: Boolean = false){
         val userDoc = Firebase.firestore.collection("users")
