@@ -54,6 +54,13 @@ object AppUtil {
                 onFailure(exception)
             }
     }
+    fun updateUserData(userId: String, updatedData: Map<String, Any>,
+                       onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        Firebase.firestore.collection("users").document(userId)
+            .update(updatedData)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { exception -> onFailure(exception) }
+    }
     fun removeFromCart(context: Context, productId: String, removeAll: Boolean = false){
         val userDoc = Firebase.firestore.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)
