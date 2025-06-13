@@ -148,6 +148,16 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                 color = colorResource(id = R.color.brown)
             )
         }
+        TextButton(onClick = {
+            navController.navigate("forgot-password")
+        }) {
+            Text(
+                text = "Forgot Password?",
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.catamaran_medium)),
+                color = colorResource(id = R.color.brown)
+            )
+        }
 
 
 

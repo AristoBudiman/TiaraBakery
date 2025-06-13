@@ -11,6 +11,7 @@ import com.example.tiarabakery.pages.Checkoutpage
 import com.example.tiarabakery.pages.ProductDetailsPage
 import com.example.tiarabakery.pages.ProfilePage
 import com.example.tiarabakery.screen.AuthScreen
+import com.example.tiarabakery.screen.ForgotPasswordScreen
 import com.example.tiarabakery.screen.HomeScreen
 import com.example.tiarabakery.screen.LoginScreen
 import com.example.tiarabakery.screen.SignupScreen
@@ -51,6 +52,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable("checkout"){
             Checkoutpage(modifier)
+        }
+
+        composable("forgot-password") {
+            ForgotPasswordScreen(navController = navController)
         }
     }
 }

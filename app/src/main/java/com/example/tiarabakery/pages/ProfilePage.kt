@@ -274,6 +274,18 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
                         ) {
                             Text("Ubah Password")
                         }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {navController.navigate("forgot-password")},
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.brown)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        ) {
+                            Text("Lupa Password")
+                        }
                     }
                 }
             }
