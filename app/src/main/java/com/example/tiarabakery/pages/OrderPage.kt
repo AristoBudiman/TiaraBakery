@@ -66,6 +66,7 @@ fun OrderPage(
             .fillMaxSize()
             .background(colorResource(id = R.color.cream))
             .padding(horizontal = 16.dp)  // Hanya padding horizontal saja
+            .padding(bottom = 120.dp)
     ) {
         Text(
             text = "Your Order",

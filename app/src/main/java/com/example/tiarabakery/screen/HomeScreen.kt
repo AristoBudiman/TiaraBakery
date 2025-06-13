@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
@@ -51,7 +53,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home),
         NavItem("Cart", Icons.Default.ShoppingCart),
-        NavItem("Favorite", Icons.Default.Favorite),
+        NavItem("Order", Icons.Default.List),
         NavItem("Profile", Icons.Default.Person),
     )
 
