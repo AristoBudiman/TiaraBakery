@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -59,18 +61,36 @@ fun OrderPage(
     val orders by orderViewModel.orders.collectAsState()
     val productsMap by orderViewModel.productsMap.collectAsState()
 
-    LazyColumn(
-        modifier = modifier
+    Column(
+        modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)
+            .background(colorResource(id = R.color.cream))
+            .padding(horizontal = 16.dp)  // Hanya padding horizontal saja
     ) {
-        items(orders) { order ->
-            val itemList = order.items.mapNotNull { (productId, quantity) ->
-                val product = productsMap[productId]
-                product?.let { it to quantity }
-            }
+        Text(
+            text = "Your Order",
+            style = TextStyle(
+                fontSize = 25.sp,
+                fontFamily = FontFamily(Font(R.font.catamaran_medium)),
+                fontWeight = FontWeight.Bold,
+            ),
+            modifier = Modifier.padding(top = 16.dp, start = 8.dp, bottom = 8.dp)  // Mengurangi bottom padding
+        )
 
-            OrderCard(order = order, items = itemList)
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp)  // Padding horizontal konsisten
+        ) {
+            items(orders) { order ->
+                val itemList = order.items.mapNotNull { (productId, quantity) ->
+                    val product = productsMap[productId]
+                    product?.let { it to quantity }
+                }
+
+                OrderCard(order = order, items = itemList)
+                Spacer(modifier = Modifier.height(8.dp))  // Jarak antar card
+            }
         }
     }
 }
@@ -81,30 +101,80 @@ fun OrderPage(
 fun OrderCard(order: OrderModel, items: List<Pair<ProductModel, Long>>) {
     val dateFormat = remember { SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()) }
     val formattedDate = dateFormat.format(order.createdAt.toDate())
-    val shortId = if (order.id.length >= 4) order.id.substring(0, 4) else order.id
 
     Column(
         modifier = Modifier
             .padding(8.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFFFF0D5))
+            .background(colorResource(id = R.color.light_brown)) // Changed to cream background
             .fillMaxWidth()
     ) {
-        // Bagian atas: metadata order
-        Row(
+        // Bagian atas: metadata order - now in vertical layout
+        Column(
             Modifier
-                .background(Color(0xFF6A4000))
+                .background(colorResource(id = R.color.brown)) // Changed to brown
                 .padding(12.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
         ) {
-            Column {
-                Text("Order id: ", fontWeight = FontWeight.Bold, color = Color.White)
-                Text(shortId, color = Color.White)
+            // Order ID - full version
+            Column(Modifier.padding(bottom = 8.dp)) {
+                Text(
+                    "Order ID",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+                Text(
+                    order.id,
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
             }
-            Column { Text("Date", fontWeight = FontWeight.Bold, color = Color.White); Text(formattedDate, color = Color.White) }
-            Column { Text("Total", fontWeight = FontWeight.Bold, color = Color.White); Text("Rp ${order.total}", color = Color.White) }
-            Column { Text("Status", fontWeight = FontWeight.Bold, color = Color.White); Text(order.status, color = Color.White) }
+
+            // Date
+            Column(Modifier.padding(bottom = 8.dp)) {
+                Text(
+                    "Date",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+                Text(
+                    formattedDate,
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
+            }
+
+            // Total
+            Column(Modifier.padding(bottom = 8.dp)) {
+                Text(
+                    "Total",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+                Text(
+                    "Rp ${order.total}",
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
+            }
+
+            // Status
+            Column {
+                Text(
+                    "Status",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+                Text(
+                    order.status,
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
+            }
         }
 
         // List item dalam order
@@ -112,7 +182,6 @@ fun OrderCard(order: OrderModel, items: List<Pair<ProductModel, Long>>) {
             Row(
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = 8.dp)
-                    .background(Color.White, RoundedCornerShape(8.dp))
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
