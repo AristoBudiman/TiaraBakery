@@ -52,7 +52,6 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         NavItem("Home", Icons.Default.Home),
         NavItem("Cart", Icons.Default.ShoppingCart),
         NavItem("Favorite", Icons.Default.Favorite),
-
         NavItem("Profile", Icons.Default.Person),
     )
 

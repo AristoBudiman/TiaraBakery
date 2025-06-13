@@ -14,10 +14,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -138,6 +140,13 @@ fun Checkoutpage(modifier: Modifier = Modifier){
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val isPayButtonEnabled = remember {
+            derivedStateOf {
+                userModel.value.address.isNotEmpty() &&
+                        userModel.value.phone.isNotEmpty()
+            }
+        }
+
         Button(
             onClick = {
                 clearCartAndAddToOrders(total.value.toLong())
@@ -145,9 +154,24 @@ fun Checkoutpage(modifier: Modifier = Modifier){
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp)
+                .height(40.dp),
+            enabled = isPayButtonEnabled.value
         ) {
             Text(text = "Pay Now")
+        }
+
+        if (!isPayButtonEnabled.value) {
+            Text(
+                text = if (userModel.value.address.isEmpty() && userModel.value.phone.isEmpty()) {
+                    "Please fill your address and phone number before payment"
+                } else if (userModel.value.address.isEmpty()) {
+                    "Please fill your address before payment"
+                } else {
+                    "Please fill your phone number before payment"
+                },
+                color = Color.Red,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
     }
 
