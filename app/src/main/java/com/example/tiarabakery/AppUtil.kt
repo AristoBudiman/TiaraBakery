@@ -7,7 +7,9 @@ import com.example.tiarabakery.model.OrderModel
 import com.example.tiarabakery.model.UserModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import java.util.UUID
@@ -89,6 +91,27 @@ object AppUtil {
         }
     }
 
+    fun updatePassword(
+        currentPassword: String,
+        newPassword: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val user = Firebase.auth.currentUser
+        val credential = EmailAuthProvider.getCredential(user?.email ?: "", currentPassword)
+
+        user?.reauthenticate(credential)?.addOnCompleteListener { reauthTask ->
+            if (reauthTask.isSuccessful) {
+                user.updatePassword(newPassword)
+                    .addOnSuccessListener { onSuccess() }
+                    .addOnFailureListener {
+                        onFailure("Gagal mengupdate password: ${it.message}")
+                    }
+            } else {
+                onFailure("Password saat ini salah")
+            }
+        }
+    }
 
     fun getDiscountPercentage() : Float{
         return 10.0f

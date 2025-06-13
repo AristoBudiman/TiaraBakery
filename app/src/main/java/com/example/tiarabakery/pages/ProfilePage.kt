@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,9 +38,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.tiarabakery.AppUtil.getUserData
+import com.example.tiarabakery.AppUtil.updatePassword
 import com.example.tiarabakery.AppUtil.updateUserData
 import com.example.tiarabakery.R
 import com.example.tiarabakery.model.UserModel
@@ -59,6 +63,13 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
     var editedName by remember { mutableStateOf("") }
     var editedPhone by remember { mutableStateOf("") }
     var editedAddress by remember { mutableStateOf("") }
+
+    // State untuk dialog ubah password
+    var showChangePasswordDialog by remember { mutableStateOf(false) }
+    var currentPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(key1 = currentUser?.uid) {
         if (currentUser != null) {
@@ -139,7 +150,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
                             onValueChange = { editedName = it },
                             label = { Text("Full Name") },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = OutlinedTextFieldDefaults.colors(  // <-- Gunakan ini untuk Material 3
+                            colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = colorResource(id = R.color.brown),
                                 unfocusedBorderColor = Color.Gray
                             )
@@ -243,19 +254,34 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 16.dp)
+                            .padding(horizontal = 24.dp, vertical = 16.dp)
                     ) {
                         ProfileInfoItem(label = "Full Name", value = user.name)
                         ProfileInfoItem(label = "Email", value = user.email)
                         ProfileInfoItem(label = "Phone Number", value = user.phone)
                         ProfileInfoItem(label = "Address", value = user.address)
+
+                        // Tombol Ubah Password di bawah Address
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { showChangePasswordDialog = true },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.brown)
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        ) {
+                            Text("Ubah Password")
+                        }
                     }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(16.dp))
 
+        // Tombol Log Out di bagian bawah
         Button(
             onClick = {
                 Firebase.auth.signOut()
@@ -265,13 +291,98 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.brown)
             )
         ) {
             Text(text = "Log Out")
         }
+    }
+
+    // Dialog untuk ganti password
+    if (showChangePasswordDialog) {
+        AlertDialog(
+            onDismissRequest = { showChangePasswordDialog = false },
+            title = { Text("Ubah Password") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = currentPassword,
+                        onValueChange = { currentPassword = it },
+                        label = { Text("Password Saat Ini") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = newPassword,
+                        onValueChange = { newPassword = it },
+                        label = { Text("Password Baru") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = confirmPassword,
+                        onValueChange = { confirmPassword = it },
+                        label = { Text("Konfirmasi Password Baru") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    passwordError?.let {
+                        Text(it, color = Color.Red, modifier = Modifier.padding(top = 8.dp))
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        when {
+                            newPassword != confirmPassword -> {
+                                passwordError = "Password baru tidak cocok"
+                            }
+                            newPassword.length < 6 -> {
+                                passwordError = "Password minimal 6 karakter"
+                            }
+                            else -> {
+                                updatePassword(
+                                    currentPassword = currentPassword,
+                                    newPassword = newPassword,
+                                    onSuccess = {
+                                        showChangePasswordDialog = false
+                                        // Reset fields
+                                        currentPassword = ""
+                                        newPassword = ""
+                                        confirmPassword = ""
+                                    },
+                                    onFailure = { error ->
+                                        passwordError = error
+                                    }
+                                )
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.brown)
+                    )
+                ) {
+                    Text("Simpan")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showChangePasswordDialog = false }
+                ) {
+                    Text("Batal")
+                }
+            }
+        )
     }
 }
 
