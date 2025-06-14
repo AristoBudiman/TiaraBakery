@@ -98,6 +98,7 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
             .fillMaxSize()
             .background(colorResource(id = R.color.cream))
             .padding(16.dp)
+            .padding(top = 40.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -274,7 +275,6 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
                         ) {
                             Text("Ubah Password")
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = {navController.navigate("forgot-password")},
                             colors = ButtonDefaults.buttonColors(
@@ -286,29 +286,27 @@ fun ProfilePage(modifier: Modifier = Modifier, navController: NavController) {
                         ) {
                             Text("Lupa Password")
                         }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        // Tombol Log Out di bagian bawah
+                        Button(
+                            onClick = {
+                                Firebase.auth.signOut()
+                                navController.navigate("auth") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.brown)
+                            )
+                        ) {
+                            Text(text = "Log Out")
+                        }
                     }
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Tombol Log Out di bagian bawah
-        Button(
-            onClick = {
-                Firebase.auth.signOut()
-                navController.navigate("auth") {
-                    popUpTo("home") { inclusive = true }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.brown)
-            )
-        ) {
-            Text(text = "Log Out")
         }
     }
 
