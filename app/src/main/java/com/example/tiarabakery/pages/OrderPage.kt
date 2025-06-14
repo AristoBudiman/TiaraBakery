@@ -100,24 +100,25 @@ fun OrderPage(
 
 @Composable
 fun OrderCard(order: OrderModel, items: List<Pair<ProductModel, Long>>) {
-    val dateFormat = remember { SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()) }
-    val formattedDate = dateFormat.format(order.createdAt.toDate())
+    val dateFormat = remember { SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault()) }
+    val formattedCreatedAt = dateFormat.format(order.createdAt.toDate())
+    val formattedUpdatedAt = dateFormat.format(order.updatedAt.toDate())
 
     Column(
         modifier = Modifier
             .padding(8.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(colorResource(id = R.color.light_brown)) // Changed to cream background
+            .background(colorResource(id = R.color.light_brown))
             .fillMaxWidth()
     ) {
-        // Bagian atas: metadata order - now in vertical layout
+        // Bagian atas: metadata order
         Column(
             Modifier
-                .background(colorResource(id = R.color.brown)) // Changed to brown
+                .background(colorResource(id = R.color.brown))
                 .padding(12.dp)
                 .fillMaxWidth()
         ) {
-            // Order ID - full version
+            // Order ID
             Column(Modifier.padding(bottom = 8.dp)) {
                 Text(
                     "Order ID",
@@ -132,16 +133,31 @@ fun OrderCard(order: OrderModel, items: List<Pair<ProductModel, Long>>) {
                 )
             }
 
-            // Date
+            // Created At
             Column(Modifier.padding(bottom = 8.dp)) {
                 Text(
-                    "Date",
+                    "Created At",
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     fontSize = 14.sp
                 )
                 Text(
-                    formattedDate,
+                    formattedCreatedAt,
+                    color = Color.White,
+                    fontSize = 12.sp
+                )
+            }
+
+            // Updated At
+            Column(Modifier.padding(bottom = 8.dp)) {
+                Text(
+                    "Updated At",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+                Text(
+                    formattedUpdatedAt,
                     color = Color.White,
                     fontSize = 12.sp
                 )

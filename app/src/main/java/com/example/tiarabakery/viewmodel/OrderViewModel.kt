@@ -27,7 +27,7 @@ class OrderViewModel : ViewModel() {
         val currentUserId = auth.currentUser?.uid ?: return
 
         db.collection("orders")
-            .whereEqualTo("userId", currentUserId)  // Filter hanya order milik user ini
+            .whereEqualTo("userId", currentUserId)
             .addSnapshotListener { snapshot, e ->
                 if (e != null || snapshot == null) {
                     return@addSnapshotListener
@@ -35,7 +35,7 @@ class OrderViewModel : ViewModel() {
 
                 val orderList = snapshot.documents.mapNotNull { doc ->
                     doc.toObject(OrderModel::class.java)?.copy(id = doc.id)
-                }
+                }.sortedByDescending { it.updatedAt } // Urutkan berdasarkan updatedAt terbaru
 
                 _orders.value = orderList
             }
