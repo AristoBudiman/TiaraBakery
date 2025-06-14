@@ -73,6 +73,7 @@ fun OrderPage(
             .background(colorResource(id = R.color.cream))
             .padding(horizontal = 16.dp)
             .padding(bottom = 120.dp)
+            .padding(top = 48.dp)
     ) {
         Text(
             text = "Your Order",

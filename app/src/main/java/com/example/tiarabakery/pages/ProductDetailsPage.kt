@@ -1,5 +1,6 @@
 package com.example.tiarabakery.pages
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,8 +20,10 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,109 +76,113 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
             }
     }
 
-    Column (
-        modifier = modifier
+    Surface(
+        modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
+            .background(colorResource(id = R.color.cream)),
+        color = Color.Transparent // Pastikan Surface tidak menimpa background
     ) {
-        Text(
-            text = product.title,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            modifier = Modifier.padding(8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Column {
-
-            val pagerState = rememberPagerState() {
-                product.images.size
-            }
-
-            HorizontalPager(
-                state = pagerState,
-                pageSpacing = 24.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AsyncImage(
-                        model = product.images.get(it),
-                        contentDescription = "banner",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            DotsIndicator(
-                dotCount = product.images.size,
-                type = ShiftIndicatorType(
-                    DotGraphic(
-                        color = colorResource(id = R.color.brown),
-                        size = 8.dp
-                    )
-                ),
-                pagerState = pagerState,
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        Column (
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-
             Text(
-                text = "Rp" + product.price,
-                fontSize = 16.sp,
-                style = TextStyle(textDecoration = TextDecoration.LineThrough)
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = "Rp" + product.actualPrice,
-                fontSize = 20.sp,
+                text = product.title,
                 fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(8.dp)
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = "Add to Favorite",
-                    tint = Color.Black
+            Spacer(modifier = Modifier.height(8.dp))
+            Column {
+
+                val pagerState = rememberPagerState() {
+                    product.images.size
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    pageSpacing = 24.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            model = product.images.get(it),
+                            contentDescription = "banner",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(16.dp))
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                DotsIndicator(
+                    dotCount = product.images.size,
+                    type = ShiftIndicatorType(
+                        DotGraphic(
+                            color = colorResource(id = R.color.brown),
+                            size = 8.dp
+                        )
+                    ),
+                    pagerState = pagerState,
+                )
+            }
+
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Rp" + product.price,
+                    fontSize = 16.sp,
+                    style = TextStyle(textDecoration = TextDecoration.LineThrough)
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(
+                    text = "Rp" + product.actualPrice,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    AppUtil.addToCart(context, productId)
+                },
+                modifier = Modifier.fillMaxSize().height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.brown)
+                )
+            ) {
+                Text(text = "Add to Cart", fontSize = 16.sp)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            if (product.description.isNotEmpty()) {
+                Text(
+                    text = "Product Description : ",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = product.description,
+                    fontSize = 16.sp
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = {
-                AppUtil.addToCart(context, productId)
-            },
-            modifier = Modifier.fillMaxSize().height(50.dp)
-        ) {
-            Text(text = "Add to Cart", fontSize = 16.sp)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        if (product.description.isNotEmpty()) {
-            Text(
-                text = "Product Description : ",
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = product.description,
-                fontSize = 16.sp
-            )
-        }
     }
+
 }
