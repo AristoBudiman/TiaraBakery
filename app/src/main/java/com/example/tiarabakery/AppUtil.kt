@@ -118,11 +118,11 @@ object AppUtil {
     }
 
     fun getDiscountPercentage() : Float{
-        return 10.0f
+        return 0f
     }
 
     fun getTaxPercentage() : Float{
-        return 11.0f
+        return 10.0f
     }
 
     fun clearCartAndAddToOrders(total: Long){
