@@ -43,11 +43,21 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import android.util.Log
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+
 
 @Composable
 fun Checkoutpage(modifier: Modifier = Modifier){
@@ -78,6 +88,7 @@ fun Checkoutpage(modifier: Modifier = Modifier){
 
     val showWebView = remember { mutableStateOf(false) }
     val paymentUrl = remember { mutableStateOf("") }
+    val orderId = remember { mutableStateOf("") }
     val context = LocalContext.current
 
 
@@ -200,12 +211,14 @@ fun Checkoutpage(modifier: Modifier = Modifier){
 
                             // Ambil token
                             val token = json.getString("token")
+                            val order = json.getString("order_id")
 
                             // Bentuk redirect_url secara manual
                             val redirectUrl = "https://app.sandbox.midtrans.com/snap/v2/vtweb/$token"
 
                             withContext(Dispatchers.Main) {
                                 paymentUrl.value = redirectUrl
+                                orderId.value = order
                                 showWebView.value = true
                             }
 
@@ -259,7 +272,27 @@ fun Checkoutpage(modifier: Modifier = Modifier){
                     }
                 }
             }
-
+            LaunchedEffect(showWebView.value, orderId.value) {
+                if (showWebView.value && orderId.value.isNotEmpty()) {
+                    while (true) {
+                        delay(3000) // setiap 3 detik
+                        try {
+                            val client = HttpClient(CIO)
+                            val response: io.ktor.client.statement.HttpResponse = client.get("https://midtrans-server-ujicoba-production.up.railway.app/check-transaction-status/${orderId.value}")
+                            val json = JSONObject(response.bodyAsText())
+                            val status = json.getString("status")
+                            if (status == "settlement" || status == "capture") {
+                                showWebView.value = false
+                                AppUtil.clearCartAndAddToOrders(total.value.toLong())
+                                GlobalNavigation.navController.navigate("home")
+                                break
+                            }
+                        } catch (e: Exception) {
+                            Log.e("Polling", "Status check error: ${e.message}")
+                        }
+                    }
+                }
+            }
         }
     }
 
