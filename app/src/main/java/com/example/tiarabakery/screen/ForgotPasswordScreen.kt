@@ -135,7 +135,7 @@ fun ForgotPasswordScreen(
         TextButton(
             onClick = { navController.popBackStack() }
         ) {
-            Text("Kembali ke Login", color = colorResource(id = R.color.brown))
+            Text("Kembali", color = colorResource(id = R.color.brown))
         }
     }
 }
