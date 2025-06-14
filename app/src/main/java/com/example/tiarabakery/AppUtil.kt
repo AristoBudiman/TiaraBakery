@@ -19,6 +19,7 @@ object AppUtil {
     fun showToast(context: Context, message: String){
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
+
     fun addToCart(context: Context, productId: String){
         val userDoc = Firebase.firestore.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)
@@ -41,6 +42,7 @@ object AppUtil {
             }
         }
     }
+
     fun getUserData(userId: String, onSuccess: (UserModel) -> Unit, onFailure: (Exception) -> Unit) {
         Firebase.firestore.collection("users").document(userId)
             .get()
@@ -56,6 +58,7 @@ object AppUtil {
                 onFailure(exception)
             }
     }
+
     fun updateUserData(userId: String, updatedData: Map<String, Any>,
                        onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         Firebase.firestore.collection("users").document(userId)
@@ -63,6 +66,7 @@ object AppUtil {
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { exception -> onFailure(exception) }
     }
+
     fun removeFromCart(context: Context, productId: String, removeAll: Boolean = false){
         val userDoc = Firebase.firestore.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)
@@ -121,24 +125,6 @@ object AppUtil {
         return 11.0f
     }
 
-//  Non-fungsional
-//    fun razorpaiApiKey() : String{
-//        return "mockdata"
-//    }
-
-//    fun startPayment(amount : Float){
-//        val checkout = Checkout()
-//        checkout.setKeyID(razorpaiApiKey())
-//
-//        val options = JSONObject()
-//        options.put("name", "Tiara Bakery")
-//        options.put("description","")
-//        options.put("amount",amount*100)
-//        options.put("currency", "USD")
-//
-//        checkout.open(GlobalNavigation.navController.context as Activity,options)
-//    }
-
     fun clearCartAndAddToOrders(total: Long){
         val userDoc = Firebase.firestore.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)
@@ -175,5 +161,4 @@ object AppUtil {
             }
         }
     }
-
 }

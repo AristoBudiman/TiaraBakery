@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,19 +21,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.tiarabakery.AppUtil
 import com.example.tiarabakery.AppUtil.clearCartAndAddToOrders
 import com.example.tiarabakery.GlobalNavigation
+import com.example.tiarabakery.MidtransWebView
 import com.example.tiarabakery.model.ProductModel
 import com.example.tiarabakery.model.UserModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 
 @Composable
 fun Checkoutpage(modifier: Modifier = Modifier){
@@ -61,6 +72,11 @@ fun Checkoutpage(modifier: Modifier = Modifier){
         mutableStateOf(0f)
     }
 
+    val showWebView = remember { mutableStateOf(false) }
+    val paymentUrl = remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+
     fun calculateAndAssign() {
         subTotal.value = 0f // Reset before calculation
 
@@ -69,7 +85,6 @@ fun Checkoutpage(modifier: Modifier = Modifier){
                 val normalizedPrice = product.actualPrice
                     .replace(",", ".")
                     .replace("[^\\d.]".toRegex(), "")
-
                 val price = normalizedPrice.toFloatOrNull() ?: 0f
                 val qty = userModel.value.cartItems[product.id] ?: 0
                 subTotal.value += price * qty
@@ -149,8 +164,48 @@ fun Checkoutpage(modifier: Modifier = Modifier){
 
         Button(
             onClick = {
-                clearCartAndAddToOrders(total.value.toLong())
-                GlobalNavigation.navController.navigate("home")
+                val data = mapOf(
+                    "total" to total.value.toLong(),
+                    "email" to userModel.value.email
+                )
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val url = URL("https://midtrans-server-ujicoba-production.up.railway.app/create-transaction")
+                        val connection = (url.openConnection() as HttpURLConnection).apply {
+                            requestMethod = "POST"
+                            doOutput = true
+                            setRequestProperty("Content-Type", "application/json")
+                        }
+
+                        val body = JSONObject(data).toString()
+                        connection.outputStream.use { os ->
+                            os.write(body.toByteArray())
+                            os.flush()
+                        }
+
+                        val responseText = connection.inputStream.bufferedReader().readText()
+                        val json = JSONObject(responseText)
+
+                        // Ambil token
+                        val token = json.getString("token")
+
+                        // Bentuk redirect_url secara manual
+                        val redirectUrl = "https://app.sandbox.midtrans.com/snap/v2/vtweb/$token"
+
+                        withContext(Dispatchers.Main) {
+                            paymentUrl.value = redirectUrl
+                            showWebView.value = true
+                        }
+
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        withContext(Dispatchers.Main) {
+                            AppUtil.showToast(context, "Failed to start payment: ${e.message}")
+                        }
+                    }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,6 +214,7 @@ fun Checkoutpage(modifier: Modifier = Modifier){
         ) {
             Text(text = "Pay Now")
         }
+
 
         if (!isPayButtonEnabled.value) {
             Text(
@@ -173,6 +229,23 @@ fun Checkoutpage(modifier: Modifier = Modifier){
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
+        if (showWebView.value) {
+            Dialog(onDismissRequest = {
+                showWebView.value = false
+            }) {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    MidtransWebView(
+                        url = paymentUrl.value,
+                        onFinish = {
+                            showWebView.value = false
+                            AppUtil.clearCartAndAddToOrders(total.value.toLong())
+                            GlobalNavigation.navController.navigate("home")
+                        }
+                    )
+                }
+            }
+        }
+
     }
 
 }

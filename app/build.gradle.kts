@@ -65,4 +65,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.8")
     implementation ("io.coil-kt:coil-compose:2.2.0")
     implementation("com.tbuonomo:dotsindicator:5.1.0")
+
+    // dependecy payment gateway midtrans
+    implementation ("com.midtrans:uikit:2.0.0-SANDBOX")
 }

@@ -198,9 +198,11 @@ fun OrderCard(order: OrderModel, items: List<Pair<ProductModel, Long>>) {
                     Text(product.title, fontWeight = FontWeight.Bold)
                     Text("x$qty", style = MaterialTheme.typography.bodySmall)
                 }
-                Text("Rp ${product.price}")
+
+                val priceLong = product.actualPrice.toLongOrNull() ?: 0L
+                val totalPrice = priceLong * qty
+                Text("Rp $totalPrice")
             }
         }
     }
 }
-

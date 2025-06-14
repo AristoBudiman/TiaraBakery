@@ -2,6 +2,7 @@ import androidx.lifecycle.ViewModel
 import com.example.tiarabakery.model.OrderModel
 import com.example.tiarabakery.model.ProductModel
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class OrderViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     private val _orders = MutableStateFlow<List<OrderModel>>(emptyList())
     val orders: StateFlow<List<OrderModel>> = _orders
@@ -22,7 +24,10 @@ class OrderViewModel : ViewModel() {
     }
 
     private fun loadOrders() {
+        val currentUserId = auth.currentUser?.uid ?: return
+
         db.collection("orders")
+            .whereEqualTo("userId", currentUserId)  // Filter hanya order milik user ini
             .addSnapshotListener { snapshot, e ->
                 if (e != null || snapshot == null) {
                     return@addSnapshotListener
@@ -35,6 +40,7 @@ class OrderViewModel : ViewModel() {
                 _orders.value = orderList
             }
     }
+
 
     private fun loadProducts() {
         Firebase.firestore

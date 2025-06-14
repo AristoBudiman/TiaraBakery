@@ -26,24 +26,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-//    override fun OnPaymentSuccess(p0: String) {
-//
-//        AppUtil.clearCartAndAddToOrders()
-//
-//        val builder = AlertDialog.Builder(this)
-//        builder.setTitle("Payment Successful")
-//            .setMessage("Thank you! Your payment was completed successfully and your order has been placed")
-//            .setPositiveButton("OK"){,->
-//                val navController = GlobalNavigation.navController
-//                navController.popBackStack()
-//                navController.navigate("home")
-//            }
-//            .setCancelable(false)
-//            .show()
-//    }
-//
-//    override fun OnPaymentError(p0: String) {
-//        AppUtil.showToast(this, "Payment Failed")
-//    }
 }
