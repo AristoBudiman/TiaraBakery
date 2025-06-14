@@ -4,6 +4,7 @@ import OrderViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,6 +54,8 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 
 @Composable
 fun OrderPage(
@@ -60,12 +64,14 @@ fun OrderPage(
 ) {
     val orders by orderViewModel.orders.collectAsState()
     val productsMap by orderViewModel.productsMap.collectAsState()
+    var selectedFilter by remember { mutableStateOf("Semua") }
+    val filterOptions = listOf("Semua", "Sedang Diproses", "Sedang Dikirim", "Selesai", "Dibatalkan")
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.cream))
-            .padding(horizontal = 16.dp)  // Hanya padding horizontal saja
+            .padding(horizontal = 16.dp)
             .padding(bottom = 120.dp)
     ) {
         Text(
@@ -75,22 +81,72 @@ fun OrderPage(
                 fontFamily = FontFamily(Font(R.font.catamaran_medium)),
                 fontWeight = FontWeight.Bold,
             ),
-            modifier = Modifier.padding(top = 16.dp, start = 8.dp, bottom = 8.dp)  // Mengurangi bottom padding
+            modifier = Modifier.padding(top = 16.dp, start = 8.dp, bottom = 8.dp)
         )
-
+        // Ganti ScrollableRow dengan Row yang bisa di-scroll
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            filterOptions.forEach { option ->
+                FilterChip(
+                    selected = selectedFilter == option,
+                    onClick = { selectedFilter = option },
+                    modifier = Modifier.padding(4.dp),
+                    label = {
+                        Text(text = option, style = MaterialTheme.typography.labelMedium)
+                    },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = colorResource(id = R.color.brown),
+                        selectedLabelColor = Color.White,
+                        containerColor = Color.LightGray,
+                        labelColor = Color.Black
+                    )
+                )
+            }
+        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 8.dp)  // Padding horizontal konsisten
+                .padding(horizontal = 8.dp)
         ) {
-            items(orders) { order ->
+            val filteredOrders = when (selectedFilter) {
+                "Semua" -> orders
+                "Sedang Diproses" -> orders.filter { it.status.equals("Sedang Diproses", ignoreCase = true) }
+                "Sedang Dikirim" -> orders.filter { it.status.equals("Sedang Dikirim", ignoreCase = true) }
+                "Selesai" -> orders.filter { it.status.equals("Selesai", ignoreCase = true) }
+                "Dibatalkan" -> orders.filter { it.status.equals("Dibatalkan", ignoreCase = true) }
+                else -> orders
+            }
+
+            if (filteredOrders.isEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Tidak ada pesanan dengan status $selectedFilter",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            }
+
+            items(filteredOrders) { order ->
                 val itemList = order.items.mapNotNull { (productId, quantity) ->
                     val product = productsMap[productId]
                     product?.let { it to quantity }
                 }
 
                 OrderCard(order = order, items = itemList)
-                Spacer(modifier = Modifier.height(8.dp))  // Jarak antar card
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
