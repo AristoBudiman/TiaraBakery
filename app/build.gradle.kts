@@ -71,5 +71,6 @@ dependencies {
     implementation ("com.midtrans:uikit:2.0.0-SANDBOX")
     implementation("io.ktor:ktor-client-core:2.3.2")
     implementation("io.ktor:ktor-client-cio:2.3.2")
+    implementation("com.composables:icons-lucide:1.0.0")
 
 }

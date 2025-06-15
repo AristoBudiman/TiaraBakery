@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tiarabakery.R
+import com.example.tiarabakery.components.AboutUsView
 import com.example.tiarabakery.components.BannerView
 import com.example.tiarabakery.components.CategoriesView
 import com.example.tiarabakery.components.HeaderView
@@ -56,6 +57,9 @@ fun HomePage(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(12.dp))
             CategoriesView()
+
+            Spacer(modifier = Modifier.height(12.dp))
+            AboutUsView()
         }
     }
 }

@@ -67,9 +67,9 @@ fun HeaderView(modifier: Modifier = Modifier) {
             )
         }
 
-        IconButton(onClick = {}) {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-        }
+//        IconButton(onClick = {}) {
+//            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+//        }
     }
 
 }
