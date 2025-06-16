@@ -111,25 +111,51 @@ fun Checkoutpage(modifier: Modifier = Modifier){
         total.value = subTotal.value - discount.value + tax.value
     }
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(Unit) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@LaunchedEffect
+
         Firebase.firestore.collection("users")
-            .document(FirebaseAuth.getInstance().currentUser?.uid!!)
-            .get().addOnCompleteListener{
-                if (it.isSuccessful) {
-                    val result = it.result.toObject(UserModel::class.java)
-                    if(result!=null){
-                        userModel.value = result
+            .document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("Firestore", "Listen failed.", error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    try {
+                        val name = snapshot.getString("name") ?: ""
+                        val email = snapshot.getString("email") ?: ""
+                        val uid = snapshot.getString("uid") ?: ""
+                        val phone = snapshot.getString("phone") ?: ""
+                        val address = snapshot.getString("address") ?: ""
+                        val role = snapshot.getString("role") ?: "user"
+                        val cartMap = snapshot.get("cartItems") as? Map<String, Long> ?: emptyMap()
+
+                        val user = UserModel(
+                            name = name,
+                            email = email,
+                            uid = uid,
+                            phone = phone,
+                            address = address,
+                            role = role,
+                            cartItems = cartMap
+                        )
+
+                        userModel.value = user
 
                         Firebase.firestore.collection("data")
                             .document("stock").collection("products")
-                            .whereIn("id",userModel.value.cartItems.keys.toList() )
-                            .get().addOnCompleteListener { task->
-                                if(task.isSuccessful){
-                                    val resultProducts = task.result.toObjects(ProductModel::class.java)
-                                    productList.addAll(resultProducts)
-                                    calculateAndAssign()
-                                }
+                            .whereIn("id", user.cartItems.keys.toList())
+                            .get()
+                            .addOnSuccessListener { task ->
+                                productList.clear()
+                                productList.addAll(task.toObjects(ProductModel::class.java))
+                                calculateAndAssign()
                             }
+
+                    } catch (e: Exception) {
+                        Log.e("SnapshotParsing", "Error mapping snapshot to UserModel", e)
                     }
                 }
             }
