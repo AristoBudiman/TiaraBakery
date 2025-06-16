@@ -18,9 +18,9 @@ Aplikasi ini memungkinkan pengguna untuk memesan roti dan kue secara online, mel
 
 ---
 
-## Video Demonstrasi
+## Video Presentasi
 
-[Tonton di YouTube](<link>)  
+[Tonton di YouTube](https://www.youtube.com/watch?v=frlOQrK8yp8)  
 
 ---
 
@@ -47,6 +47,12 @@ Tersedia langsung di halaman checkout.
 - Pemesanan produk secara real-time
 - Pembayaran digital via Midtrans
 - Pelacakan status pesanan
+
+---
+
+## Link GitHub server back-end Midtrans
+
+https://github.com/AristoBudiman/midtrans-server-ujicoba
 
 ---
 
