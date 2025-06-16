@@ -89,6 +89,7 @@ fun Checkoutpage(modifier: Modifier = Modifier){
     val showWebView = remember { mutableStateOf(false) }
     val paymentUrl = remember { mutableStateOf("") }
     val orderId = remember { mutableStateOf("") }
+    val transactionCompleted = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
 
@@ -291,26 +292,39 @@ fun Checkoutpage(modifier: Modifier = Modifier){
                             url = paymentUrl.value,
                             onFinish = {
                                 showWebView.value = false
-                                AppUtil.clearCartAndAddToOrders(total.value.toLong())
-                                GlobalNavigation.navController.navigate("home")
                             }
                         )
                     }
                 }
             }
-            LaunchedEffect(showWebView.value, orderId.value) {
-                if (showWebView.value && orderId.value.isNotEmpty()) {
+            LaunchedEffect(orderId.value, showWebView.value) {
+                if (orderId.value.isNotEmpty() && !transactionCompleted.value) {
                     while (true) {
-                        delay(3000) // setiap 3 detik
+                        delay(3000)
                         try {
                             val client = HttpClient(CIO)
-                            val response: io.ktor.client.statement.HttpResponse = client.get("https://midtrans-server-ujicoba-production.up.railway.app/check-transaction-status/${orderId.value}")
+                            val response = client.get("https://midtrans-server-ujicoba-production.up.railway.app/check-transaction-status/${orderId.value}")
                             val json = JSONObject(response.bodyAsText())
                             val status = json.getString("status")
+
                             if (status == "settlement" || status == "capture") {
-                                showWebView.value = false
-                                AppUtil.clearCartAndAddToOrders(total.value.toLong())
-                                GlobalNavigation.navController.navigate("home")
+                                if (!transactionCompleted.value) {
+                                    transactionCompleted.value = true
+
+                                    withContext(Dispatchers.Main) {
+                                        showWebView.value = false
+                                        AppUtil.clearCartAndAddToOrders(total.value.toLong()) // Buat order DI SINI SAJA
+                                        GlobalNavigation.navController.navigate("home")
+                                    }
+                                    break
+                                }
+                            } else if (status == "expire" || status == "cancel") {
+                                transactionCompleted.value = true
+                                withContext(Dispatchers.Main) {
+                                    showWebView.value = false
+                                    AppUtil.showToast(context, "Payment failed or expired.")
+                                    GlobalNavigation.navController.navigate("home")
+                                }
                                 break
                             }
                         } catch (e: Exception) {
